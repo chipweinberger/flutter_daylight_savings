@@ -1,5 +1,6 @@
 [![pub package](https://img.shields.io/pub/v/flutter_daylight_savings.svg)](https://pub.dartlang.org/packages/flutter_daylight_savings)
 
+## Flutter Daylight Savings
 
 Get daylight savings transitions from the platform
 
