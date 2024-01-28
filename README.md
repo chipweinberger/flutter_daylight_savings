@@ -14,10 +14,6 @@ FlutterDaylightSavings has zero dependencies besides Flutter, Android, iOS, and 
 var transitions = await FlutterDaylightSavings.getNextTransitions(count: 50);
 ```
 
-## ⭐ Stars ⭐
-
-Please star this repo & on [pub.dev](https://pub.dev/packages/flutter_daylight_savings). We all benefit from having a larger community.
-
 ## Example App
 
 Enable the platforms you need.
@@ -30,6 +26,10 @@ flutter config --enable-ios
 flutter create .
 flutter run
 ```
+
+## ⭐ Stars ⭐
+
+Please star this repo & on [pub.dev](https://pub.dev/packages/flutter_daylight_savings). We all benefit from having a larger community.
 
 
 
