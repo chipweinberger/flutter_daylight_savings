@@ -1,2 +1,5 @@
+## 1.1.0
+* **[Feature]** android support
+
 ## 1.0.0
-* **[Feature]** Initial Release.
+* **[Feature]** iOS & macOS support
