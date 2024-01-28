@@ -71,8 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(transitions![index].timestamp * 1000);
                     String dateStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
                     return ListTile(
-                      title: Text('Timestamp: ${transitions![index].timestamp} ($dateStr)'),
-                      subtitle: Text('Offset: ${transitions![index].offset}'),
+                      title: Text('Timestamp: ${transitions![index].unixtime} ($dateStr)'),
+                      subtitle: Text('Offset: ${transitions![index].localOffset}'),
                     );
                   },
                 ),

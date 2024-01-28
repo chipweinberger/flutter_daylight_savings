@@ -46,7 +46,7 @@
                     NSInteger localOffset = [timeZone secondsFromGMTForDate:nextDSTDate] / 60; // Convert seconds to minutes
 
                     // Add the information to the array
-                    [transitions addObject:@{@"timestamp": @(unixTimestamp), @"offset": @(localOffset)}];
+                    [transitions addObject:@{@"unixtime": @(unixTimestamp), @"localOffset": @(localOffset)}];
 
                     // Update currentDate for the next iteration
                     currentDate = nextDSTDate;

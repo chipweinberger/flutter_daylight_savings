@@ -2,15 +2,15 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 class DstTransition {
-  final int timestamp;
-  final int offset; /// in minutes
+  final int unixtime; /// in utc
+  final int localOffset; /// in minutes
 
-  DstTransition({required this.timestamp, required this.offset});
+  DstTransition({required this.unixtime, required this.localOffset});
 
   factory DstTransition.fromMap(Map<dynamic, dynamic> map) {
     return DstTransition(
-      timestamp: map['timestamp'].toInt(),
-      offset: map['offset'].toInt(),
+      unixtime: map['unixtime'].toInt(),
+      localOffset: map['localOffset'].toInt(),
     );
   }
 }

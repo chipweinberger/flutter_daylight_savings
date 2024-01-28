@@ -105,8 +105,8 @@ public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result
 
                                             // DST Transition found
                                             Map<String, Object> transitionDetails = new HashMap<>();
-                                            transitionDetails.put("timestamp", unixtime);
-                                            transitionDetails.put("offset", currentOffset / 1000 / 60);
+                                            transitionDetails.put("unixtime", unixtime);
+                                            transitionDetails.put("localOffset", currentOffset / 1000 / 60);
                                             transitions.add(transitionDetails);
 
                                             prevOffset = currentOffset;
