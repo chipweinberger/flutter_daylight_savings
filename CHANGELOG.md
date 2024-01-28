@@ -1,3 +1,6 @@
+## 1.2.1
+* **[example]** missed a rename
+
 ## 1.2.0
 * **[rename]** timestamp -> unixtime, offset -> localOffset
 
