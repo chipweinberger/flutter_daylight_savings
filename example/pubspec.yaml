@@ -1,0 +1,19 @@
+name: example
+description: flutter_daylight_savings example app.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.15.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_daylight_savings:
+    path: ../
+
+  intl: ^0.17.0
+
