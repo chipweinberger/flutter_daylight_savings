@@ -13,7 +13,7 @@ FlutterDaylightSavings has zero dependencies besides Flutter, Android, iOS, and 
 ```dart
 // class DstTransition {
 //  final int unixtime; // in utc
-//  final int offset; // in minutes
+//  final int localOffset; // in minutes
 //}
 
 List<DstTransition> transitions = await FlutterDaylightSavings.getNextTransitions(count: 50);

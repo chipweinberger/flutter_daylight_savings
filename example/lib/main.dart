@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: ListView.builder(
                   itemCount: transitions!.length,
                   itemBuilder: (context, index) {
-                    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(transitions![index].timestamp * 1000);
+                    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(transitions![index].unixtime * 1000);
                     String dateStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
                     return ListTile(
                       title: Text('Timestamp: ${transitions![index].unixtime} ($dateStr)'),
