@@ -42,20 +42,19 @@ public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result
 
             long thirtyDays = 30L * 24 * 60 * 60 * 1000;
             long oneDay = 24L * 60 * 60 * 1000;
+            long oneHour = 60 * 60 * 1000;
             long oneMinute = 60 * 1000;
 
             TimeZone timeZone = TimeZone.getDefault(); 
             long currentTime = System.currentTimeMillis();
 
             long prevTime = currentTime;
-            long prevOffset = timeZone.getOffset(prevTime);
+            long prevOffset = timeZone.getOffset(currentTime);
 
             List<Map<String, Object>> transitions = new ArrayList<>();
-
             int monthsWithoutTransition = 0;
 
             while (transitions.size() < count) {
-
                 // prevent infinite loop
                 if (monthsWithoutTransition >= 36) {
                     break;
@@ -66,7 +65,6 @@ public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result
 
                 // found transition?
                 if (prevOffset != timeZone.getOffset(currentTime)) {
-
                     // Reset counter as transition is found
                     monthsWithoutTransition = 0; 
 
@@ -75,47 +73,54 @@ public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result
 
                     // check day by day
                     for (int day = 0; day < 30; day++) {
-
-                        // go to next day
-                        dayTime += oneDay;
+                        dayTime += oneDay; // go to next day
 
                         // found transition?
                         if (prevOffset != timeZone.getOffset(dayTime)) {
-
                             // go back to previous day
-                            long minuteTime = dayTime - oneDay;
+                            long hourTime = dayTime - oneDay;
 
-                            // check minute by minute
-                            // 1440 minutes in a day
-                            for (int minute = 0; minute < 1440; minute++) {
-
-                                // go to next minute
-                                minuteTime += oneMinute;
-
-                                // get timezone offset
-                                long currentOffset = timeZone.getOffset(minuteTime);
+                            // check hour by hour
+                            for (int hour = 0; hour < 24; hour++) {
+                                hourTime += oneHour; // go to next hour
 
                                 // found transition?
-                                if (prevOffset != currentOffset) {
+                                if (prevOffset != timeZone.getOffset(hourTime)) {
+                                    // go back to previous hour
+                                    long minuteTime = hourTime - oneHour;
 
-                                    // DST Transition found
-                                    Map<String, Object> transitionDetails = new HashMap<>();
-                                    transitionDetails.put("timestamp", minuteTime / 1000);
-                                    transitionDetails.put("offset", currentOffset / 1000 / 60);
-                                    transitions.add(transitionDetails);
+                                    // check minute by minute
+                                    for (int minute = 0; minute < 60; minute++) {
 
-                                    prevOffset = currentOffset;
+                                        minuteTime += oneMinute; // go to next minute
 
-                                    break; // Exit minute loop
+                                        // get timezone offset
+                                        long currentOffset = timeZone.getOffset(minuteTime);
+
+                                        // found transition?
+                                        if (prevOffset != currentOffset) {
+
+                                            // floor to minute start
+                                            long unixtime = ((minuteTime / 60000) * 60000) / 1000;
+
+                                            // DST Transition found
+                                            Map<String, Object> transitionDetails = new HashMap<>();
+                                            transitionDetails.put("timestamp", unixtime);
+                                            transitionDetails.put("offset", currentOffset / 1000 / 60);
+                                            transitions.add(transitionDetails);
+
+                                            prevOffset = currentOffset;
+                                            break; // Exit minute loop
+                                        }
+                                    }
+                                    break; // Exit hour loop
                                 }
                             }
                             break; // Exit day loop
                         }
                     }
                 }
-                
                 monthsWithoutTransition++;
-
                 prevTime = currentTime;
             }
 
@@ -124,9 +129,9 @@ public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result
         default:
             result.notImplemented();
             break;
-   
     }
 }
+
 
 
 
