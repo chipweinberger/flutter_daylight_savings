@@ -2,7 +2,7 @@
 
 ## Flutter Daylight Savings
 
-Get daylight savings transitions from the platform
+Get upcoming daylight savings transitions from the operating system
 
 ## No Dependencies
 

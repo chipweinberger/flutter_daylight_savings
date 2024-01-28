@@ -25,7 +25,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<DstTransition> transitions = [];
+  List<DstTransition>? transitions;
   String errorMessage = '';
 
   void getTransitions() async {
@@ -61,19 +61,22 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: getTransitions,
               child: Text('Get Transitions'),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: transitions.length,
-                itemBuilder: (context, index) {
-                  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(transitions[index].timestamp * 1000);
-                  String dateStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-                  return ListTile(
-                    title: Text('Timestamp: ${transitions[index].timestamp} ($dateStr)'),
-                    subtitle: Text('Offset: ${transitions[index].offset}'),
-                  );
-                },
+            if (transitions != null)
+              Text('Found ${transitions!.length} transitions'),
+            if (transitions != null)
+              Expanded(
+                child: ListView.builder(
+                  itemCount: transitions!.length,
+                  itemBuilder: (context, index) {
+                    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(transitions![index].timestamp * 1000);
+                    String dateStr = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+                    return ListTile(
+                      title: Text('Timestamp: ${transitions![index].timestamp} ($dateStr)'),
+                      subtitle: Text('Offset: ${transitions![index].offset}'),
+                    );
+                  },
+                ),
               ),
-            ),
           ],
         ),
       ),

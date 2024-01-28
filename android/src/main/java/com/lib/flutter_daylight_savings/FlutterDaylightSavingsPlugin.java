@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -30,54 +32,102 @@ public class FlutterDaylightSavingsPlugin implements
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         mMethodChannel.setMethodCallHandler(null);
-        cleanup();
     }
 
-    @Override
-    public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+@Override
+public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+    switch (call.method) {
+        case "getNextTransitions":
+            int count = call.argument("count");
 
-        switch (call.method) {
-            case "getNextTransitions":
-                int count = call.argument("count");
+            long thirtyDays = 30L * 24 * 60 * 60 * 1000;
+            long oneDay = 24L * 60 * 60 * 1000;
+            long oneMinute = 60 * 1000;
 
-                TimeZone timeZone = TimeZone.getDefault(); 
-                Calendar calendar = Calendar.getInstance(timeZone);
+            TimeZone timeZone = TimeZone.getDefault(); 
+            long currentTime = System.currentTimeMillis();
 
-                List<Map<String, Object>> transitions = new ArrayList<>();
-                int got = 0;
-                while (got < count) {
-                    // Move to the next day
-                    calendar.add(Calendar.DATE, 1);
+            long prevTime = currentTime;
+            long prevOffset = timeZone.getOffset(prevTime);
 
-                    // Check if DST changes on this day
-                    if (timeZone.inDaylightTime(calendar.getTime())) {
-                        // Move to the next day where DST doesn't apply
-                        while (timeZone.inDaylightTime(calendar.getTime())) {
-                            calendar.add(Calendar.DATE, 1);
+            List<Map<String, Object>> transitions = new ArrayList<>();
+
+            int monthsWithoutTransition = 0;
+
+            while (transitions.size() < count) {
+
+                // prevent infinite loop
+                if (monthsWithoutTransition >= 36) {
+                    break;
+                }
+                
+                // go to next month
+                currentTime += thirtyDays;
+
+                // found transition?
+                if (prevOffset != timeZone.getOffset(currentTime)) {
+
+                    // Reset counter as transition is found
+                    monthsWithoutTransition = 0; 
+
+                    // go back to previous month
+                    long dayTime = currentTime - thirtyDays;
+
+                    // check day by day
+                    for (int day = 0; day < 30; day++) {
+
+                        // go to next day
+                        dayTime += oneDay;
+
+                        // found transition?
+                        if (prevOffset != timeZone.getOffset(dayTime)) {
+
+                            // go back to previous day
+                            long minuteTime = dayTime - oneDay;
+
+                            // check minute by minute
+                            // 1440 minutes in a day
+                            for (int minute = 0; minute < 1440; minute++) {
+
+                                // go to next minute
+                                minuteTime += oneMinute;
+
+                                // get timezone offset
+                                long currentOffset = timeZone.getOffset(minuteTime);
+
+                                // found transition?
+                                if (prevOffset != currentOffset) {
+
+                                    // DST Transition found
+                                    Map<String, Object> transitionDetails = new HashMap<>();
+                                    transitionDetails.put("timestamp", minuteTime / 1000);
+                                    transitionDetails.put("offset", currentOffset / 1000 / 60);
+                                    transitions.add(transitionDetails);
+
+                                    prevOffset = currentOffset;
+
+                                    break; // Exit minute loop
+                                }
+                            }
+                            break; // Exit day loop
                         }
-
-                        // DST Transition found, get Unix timestamp and local offset
-                        long unixTimestamp = calendar.getTimeInMillis() / 1000;
-                        int localOffset = timeZone.getOffset(calendar.getTimeInMillis()) / 1000 / 60;
-
-                        // Create a map to store transition details
-                        Map<String, Object> transitionDetails = new HashMap<>();
-                        transitionDetails.put("timestamp", unixTimestamp);
-                        transitionDetails.put("offset", localOffset);
-
-                        // Add to the transitions list
-                        transitions.add(transitionDetails);
-
-                        // Increment the count
-                        got++;
                     }
                 }
+                
+                monthsWithoutTransition++;
 
-                result.success(transitions);
-                break;
-            default:
-                result.notImplemented();
-                break;
-        }
+                prevTime = currentTime;
+            }
+
+            result.success(transitions);
+            break;
+        default:
+            result.notImplemented();
+            break;
+   
     }
+}
+
+
+
 }

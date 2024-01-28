@@ -1,5 +1,5 @@
 name: flutter_daylight_savings
-description: Get daylight savings transitions from platform
+description: Get upcoming daylight savings transitions from the system
 version: 1.0.0
 homepage: https://github.com/chipweinberger/flutter_daylight_savings
 
